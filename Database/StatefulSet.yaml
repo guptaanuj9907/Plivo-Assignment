@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql
+  namespace: default
+spec:
+  serviceName: "mysql"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+        - name: mysql
+          image: mysql:5.7
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - name: mysql-storage
+              mountPath: /var/lib/mysql
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: "your-root-password"
+            - name: MYSQL_DATABASE
+              value: "your-database-name"
+            - name: MYSQL_USER
+              value: "your-username"
+            - name: MYSQL_PASSWORD
+              value: "your-password"
+  volumeClaimTemplates:
+    - metadata:
+        name: mysql-storage
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 10Gi

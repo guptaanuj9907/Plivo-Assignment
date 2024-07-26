@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alertmanager
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: alertmanager
+  template:
+    metadata:
+      labels:
+        app: alertmanager
+    spec:
+      containers:
+        - name: alertmanager
+          image: prom/alertmanager:latest
+          args:
+            - "--config.file=/etc/alertmanager/alertmanager.yml"
+          volumeMounts:
+            - name: config
+              mountPath: /etc/alertmanager
+      volumes:
+        - name: config
+          configMap:
+            name: alertmanager-config
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: alertmanager-config
+data:
+  alertmanager.yml: |
+    global:
+      resolve_timeout: 5m
+
+    route:
+      receiver: 'email'
+      group_by: ['alertname']
+      group_wait: 10s
+      group_interval: 5m
+      repeat_interval: 1h
+
+    receivers:
+      - name: 'email'
+        email_configs:
+          - to: 'your-email@example.com'
+            send_resolved: true

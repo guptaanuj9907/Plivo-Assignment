@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fluent-bit-config
+  namespace: kube-system
+data:
+  fluent-bit.conf: |
+    [SERVICE]
+        Log_Level info
+        Daemon off
+        Flush 5
+
+    [INPUT]
+        Name tail
+        Path /var/log/containers/*.log
+        Parser docker
+        Tag kube.*
+        Refresh_Interval 5
+        Rotate_Wait 30
+        DB /var/log/fluent-bit/fluent-bit.db
+        DB.Sync flush
+
+    [OUTPUT]
+        Name es
+        Match *
+        Host elasticsearch-logging.default.svc.cluster.local
+        Port 9200
+        Index fluent-bit
+        Type _doc
+        Logstash_Format On
+        Retry_Limit False
+
+    [FILTER]
+        Name kubernetes
+        Match kube.*
+        K8S-Logging.Parser On
+        K8S-Logging.Exclude On

@@ -1,0 +1,39 @@
+Flow Diagram Description
+Start->Checkout->Build->Test->Docker Build->Docker Push->Deploy to Kubernetes
+
+Start
+The pipeline begins when a commit is pushed to the repository or a build is triggered.
+
+Checkout
+
+Action: Clone the repository.
+Outcome: Source code is available for the build process.
+
+Build
+
+Action: Set up Python environment, install dependencies from requirements.txt.
+Outcome: The application is built and ready for testing.
+
+Test
+
+Action: Run tests using pytest.
+Outcome: Tests are executed to ensure the application works as expected.
+
+Docker Build
+
+Action: Build Docker image for the Flask application.
+Outcome: Docker image is created and tagged.
+
+Docker Push
+
+Action: Push Docker image to Docker registry.
+Outcome: Docker image is stored in the registry and available for deployment.
+Deploy to Kubernetes
+
+Action: Update Kubernetes deployment with the new Docker image.
+Outcome: Application is updated in the Kubernetes cluster.
+
+
+
+
+
